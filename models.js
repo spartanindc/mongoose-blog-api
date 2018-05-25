@@ -17,7 +17,7 @@ const blogpostSchema = mongoose.Schema({
 //Virtual
 
 blogpostSchema.virtual('authorName').get(function() {
-  return `${this.firstName} ${this.lastName}`.trim()
+  return `${this.author.firstName} ${this.author.lastName}`.trim()
 });
 
 //Serialize

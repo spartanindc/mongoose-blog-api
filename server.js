@@ -8,7 +8,7 @@ app.use(morgan('common'))
 
 mongoose.Promise = global.Promise;
 
-const { PORT, DATABASE_URL } = require('./config');
+const { DATABASE_URL, PORT } = require('./config');
 const { BlogPosts } = require('./models');
 
 const app = express();
