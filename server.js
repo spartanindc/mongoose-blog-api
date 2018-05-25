@@ -23,11 +23,11 @@ app.get('/blog-posts', (req, res) => {
     .then(posts => {
       res.json({
         posts: posts.map(
-        (posts) => post.serialize())
+        (posts) => posts.serialize())
       });
   })
   .catch(err => {
-    console.error(err);
+    console.error('Fatal Error ' + err);
     res.status(500).json({ message: 'Internal server error' });
   });
 });
