@@ -11,6 +11,9 @@ mongoose.Promise = global.Promise;
 const { DATABASE_URL, PORT } = require('./config');
 const { BlogPosts } = require('./models');
 
+console.log(DATABASE_URL);
+console.log(PORT);
+
 const app = express();
 app.use(express.json());
 
@@ -110,6 +113,7 @@ function runServer(databaseUrl, port = PORT) {
         resolve();
       })
         .on('error', err => {
+          console.log('Fatal Err: ' + err);
           mongoose.disconnect();
           reject(err);
       });
