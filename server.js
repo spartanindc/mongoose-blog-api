@@ -4,8 +4,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 
-app.use(morgan('common'))
-
 mongoose.Promise = global.Promise;
 
 const { DATABASE_URL, PORT } = require('./config');
@@ -16,6 +14,7 @@ console.log(PORT);
 
 const app = express();
 app.use(express.json());
+app.use(morgan('common'));
 
 //Get
 app.get('/blog-posts', (req, res) => {
