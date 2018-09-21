@@ -4,15 +4,31 @@ const mongoose = require('mongoose');
 
 //Schema
 const blogpostSchema = mongoose.Schema({
-  title: {type: String, required: true},
+  title: {
+    type: 'string', 
+    required: true},
   author: {
-    firstName: String,
-    lastName: String,
-    //required: true
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Author'
   },
-  content: {type: String, required: true},
-  publicationDate: Date
+  content: {
+    type: 'string', 
+    required: true},
+  publicationDate: Date,
+  comments: [commentSchema]
 });
+
+const authorSchema = mongoose.Schema({
+  firstName: 'string',
+  lastName: 'string',
+  userName: {
+    type: 'string',
+    unique: true
+  }
+});
+
+const commentSchema = mongoose.Schema({ 
+  content: 'string'});
 
 //Virtual
 
@@ -34,5 +50,6 @@ blogpostSchema.methods.serialize = function() {
 }
 
 const BlogPosts = mongoose.model('BlogPosts', blogpostSchema);
+const Author = mongoose.model('Author', authorSchema);
 
 module.exports = {BlogPosts};
