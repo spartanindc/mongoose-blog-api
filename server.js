@@ -7,7 +7,7 @@ const morgan = require('morgan');
 mongoose.Promise = global.Promise;
 
 const { DATABASE_URL, PORT } = require('./config');
-const { BlogPosts } = require('./models');
+const { Author, BlogPosts } = require('./models');
 
 console.log(DATABASE_URL);
 console.log(PORT);
@@ -16,20 +16,67 @@ const app = express();
 app.use(express.json());
 app.use(morgan('common'));
 
-//Get
+//Get Blog Posts
 app.get('/blog-posts', (req, res) => {
   BlogPosts
     .find()
     .then(posts => {
       res.json({
         posts: posts.map(
-        (posts) => posts.serialize())
-      });
-  })
-  .catch(err => {
+        (posts) => {
+          return {
+          title: posts.title,
+          content: posts.content,
+          author: posts.authorName, 
+          id: posts._id
+        };
+      }));
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something went wrong' });
+    });
+});
+  
+app.get('/blog-posts/:id', (req, res) => {
+  BlogPosts
+    .findbyId(req.params.id)
+    .then(posts => {
+      res.json({
+        posts: posts.map(
+        (posts) => {
+          return {
+          title: posts.title,
+          content: posts.content,
+          author: posts.authorName, 
+          id: posts._id,
+          comments: posts.comments
+        };
+      }));
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something went wrong' });
+    });
+});
+  
+//Get Authors
+app.get('/authors', (req, res) => {
+  Author
+    .find()
+    .then(authors => {
+      res.json(authors.map(author => {
+        return {
+          id: author._id,
+          name: `${author.firstName} ${author.lastName}`,
+          userName: author.userName
+        };
+      }));
+    })
+    .catch(err => {
     console.error('Fatal Error ' + err);
     res.status(500).json({ message: 'Internal server error' });
-  });
+    });
 });
 
 //Post

@@ -30,6 +30,12 @@ const authorSchema = mongoose.Schema({
 const commentSchema = mongoose.Schema({ 
   content: 'string'});
 
+//Populate
+blogpostSchema.pre('findOne', function(next) {
+  this.populate('author');
+  next();
+});
+
 //Virtual
 
 blogpostSchema.virtual('authorName').get(function() {
@@ -45,11 +51,12 @@ blogpostSchema.methods.serialize = function() {
     title: this.title,
     author: this.authorName,
     content: this.content,
-    publicationDate: this.publicationDate
+    publicationDate: this.publicationDate,
+    comments: this.comments
   };
 }
 
 const BlogPosts = mongoose.model('BlogPosts', blogpostSchema);
 const Author = mongoose.model('Author', authorSchema);
 
-module.exports = {BlogPosts};
+module.exports = {Author, BlogPosts};
