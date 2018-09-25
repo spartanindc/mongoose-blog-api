@@ -79,10 +79,10 @@ app.get('/authors', (req, res) => {
     });
 });
 
-//Post
+//Post Blog Posts
 app.post('blog-posts', (req,res) => {
   
-  const requiredFields = ['title', 'author', 'content'];
+  const requiredFields = ['title', 'author_id', 'content'];
   for (let i=0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -92,20 +92,35 @@ app.post('blog-posts', (req,res) => {
     }
   }
   
-  BlogPosts
-    .create({
-    title: req.body.title,
-    author: req.body.author,
-    content: req.body.content
-  })
-  .then(blogposts => res.status(201).json(blogposts.serialize()))
-  .catch(err => {
-    console.error(err);
-    res.status(500).json({message: 'Internal server error'});
+  Author
+    .findById(req.body.author_id)
+    .then(author => {
+      if (author) {
+        BlogPosts
+          .create({
+          title: req.body.title,
+          author: req.body.id,
+          content: req.body.content
+        })
+        .then(blogposts => res.status(201).json(blogposts.serialize()))
+        .catch(err => {
+          console.error(err);
+          res.status(500).json({message: 'Internal server error'});
+        });
+      }
+      else {
+        const message = `Author not found`;
+        console.error(message);
+        return res.status(400).send(message);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something wrong' });
+    });
   });
-});
 
-//Put
+//Put Blog posts
 
 app.put('blog-posts/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
@@ -124,8 +139,12 @@ app.put('blog-posts/:id', (req, res) => {
     }
   });
   BlogPosts
-    .findByIdAndUpdate(req.params.id, { $set: toUpdate })
-    .then(blogposts => res.status(204).end())
+    .findByIdAndUpdate(req.params.id, { $set: toUpdate }, { new: true })
+    .then(updatedPost => res.status(200).json({
+      id: updatedPost.id,
+      title: updatedPost.title,
+      content: updatedPost.content
+    }))
     .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
@@ -134,7 +153,9 @@ app.put('blog-posts/:id', (req, res) => {
 app.delete('/blog-posts/:id', (req, res) => {
   BlogPosts
     .findByIdAndRemove(req.params.id)
-    .then(blogposts => res.status(204).end())
+    .then(() => {
+      console.log(`Deleted blog post with id \`${req.params.id}\``);
+      res.status(204).end();
     .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
