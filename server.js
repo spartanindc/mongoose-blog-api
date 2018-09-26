@@ -78,7 +78,7 @@ app.get('/authors', (req, res) => {
 });
 
 //Post Blog Posts
-app.post('/blog-posts', (req,res) => {
+app.post('blog-posts', (req,res) => {
   
   const requiredFields = ['title', 'author_id', 'content'];
   for (let i=0; i < requiredFields.length; i++) {
@@ -164,7 +164,7 @@ app.post('/authors', (req, res) => {
 
 //Put Blog posts
 
-app.put('/blog-posts/:id', (req, res) => {
+app.put('blog-posts/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     const message = (
       `Request path id (${req.params.id}) and request body id ` +
