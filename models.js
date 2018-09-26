@@ -3,6 +3,10 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
+
+const commentSchema = mongoose.Schema({ 
+  content: 'string'});
+
 //Schema
 const blogpostSchema = mongoose.Schema({
   title: 'string', 
@@ -23,8 +27,7 @@ const authorSchema = mongoose.Schema({
   }
 });
 
-const commentSchema = mongoose.Schema({ 
-  content: 'string'});
+
 
 //Populate
 
@@ -55,7 +58,7 @@ blogpostSchema.methods.serialize = function() {
   };
 }
 
-const BlogPosts = mongoose.model('BlogPosts', blogpostSchema);
+const BlogPosts = mongoose.model('BlogPost', blogpostSchema);
 let Author = mongoose.model('Author', authorSchema);
 
 module.exports = {Author, BlogPosts};
