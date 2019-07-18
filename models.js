@@ -1,20 +1,20 @@
 'use strict';
 
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
+
+const commentSchema = mongoose.Schema({ 
+  content: 'string'});
 
 //Schema
 const blogpostSchema = mongoose.Schema({
-  title: {
-    type: 'string', 
-    required: true},
+  title: 'string', 
   author: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Author'
   },
-  content: {
-    type: 'string', 
-    required: true},
-  publicationDate: Date,
+  content: 'string', 
   comments: [commentSchema]
 });
 
@@ -27,10 +27,14 @@ const authorSchema = mongoose.Schema({
   }
 });
 
-const commentSchema = mongoose.Schema({ 
-  content: 'string'});
+
 
 //Populate
+
+blogpostSchema.pre('find', function(next) {
+    this.populate('author');
+    next();
+})
 blogpostSchema.pre('findOne', function(next) {
   this.populate('author');
   next();
@@ -45,18 +49,16 @@ blogpostSchema.virtual('authorName').get(function() {
 //Serialize
 
 blogpostSchema.methods.serialize = function() {
-  
   return {
     id: this._id,
     title: this.title,
     author: this.authorName,
     content: this.content,
-    publicationDate: this.publicationDate,
     comments: this.comments
   };
 }
 
-const BlogPosts = mongoose.model('BlogPosts', blogpostSchema);
-const Author = mongoose.model('Author', authorSchema);
+const BlogPosts = mongoose.model('BlogPost', blogpostSchema);
+let Author = mongoose.model('Author', authorSchema);
 
 module.exports = {Author, BlogPosts};
